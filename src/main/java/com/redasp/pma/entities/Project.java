@@ -21,7 +21,8 @@ public class Project {
 	private String stage; //INPROGRESS, COMPLETED, NOTSTARTED	
 	private String description;
 	
-	@OneToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST},fetch=FetchType.LAZY)
+	//@OneToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST},fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="project")
 	private List<Employee> employees;
 	
 	
