@@ -49,6 +49,6 @@ public class ProjectManagementApplicationTests {
 		
 		Project newProject = new Project("New Test Project","COMPLETED","Test Description");
 		proRepo.save(newProject);
-		assertEquals(1,proRepo.findAll().size());
+		assertEquals(5,proRepo.findAll().size());
 	}
 }

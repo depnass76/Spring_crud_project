@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<head th:replace="layouts :: header"></head>
+
+
+<body>
+
+	<nav th:replace="layouts :: navbar"></nav>
+
+	<div class="container">
+
+		<h3>Update Project</h3>
+		<hr>
+
+		<form th:action="@{/projects/save}" th:object="${project}" method="POST">
+			<!-- used for update -->
+
+			<div class="input-group mb-3">
+				<input type="hidden" th:field="${project.projectId}" />
+			</div>
+
+
+			<div class="input-group mb-3">
+				<span class="input-group-text">Project Name</span>
+				<input type="text" aria-label="Project name" class="form-control" th:field="${project.name}">
+			</div>
+
+			<div class="input-group mb-3">
+				<span class="input-group-text">Stages</span>
+				<select class="form-select" th:field="${project.stage}">
+					<option th:value="NOTSTARTED">Not Started</option>
+					<option th:value="INPROGRESS">In Progress</option>
+					<option th:value="COMPLETED">Completed</option>
+				</select>
+			</div>
+			
+			<div class="input-group mb-3">
+				<span class="input-group-text">Employee Name</span>
+				<select th:field="*{employees}" multiple="multiple">
+					<option th:each="employee : ${allEmployees}" th:value="${employee.employeeId}"
+						th:text="${employee.firstName}">
+					</option>
+				</select>
+
+			</div>
+
+			<div class="input-group mb-3">
+				<span class="input-group-text">Project Description</span>
+				<textarea type="text" placeholder="Enter Project Description"
+					th:field="${project.description}"></textarea>
+			</div>
+
+
+
+			<div class="form-group mb-3">
+				<button type="submit" class="btn btn-primary mb-2">Update Project</button>
+			</div>
+
+		</form>
+
+
+	</div>
+
+</body>
+
+</html>
