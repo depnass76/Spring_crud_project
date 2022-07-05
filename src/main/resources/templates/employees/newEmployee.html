@@ -5,27 +5,43 @@
 
 <body>
 
-<nav th:replace="layouts :: navbar"></nav>
-	
+	<nav th:replace="layouts :: navbar"></nav>
+
 	<div class="container">
-		
+
 		<h3>Create Employee</h3>
-			<hr>
-			
-		<form action="/employees/save" th:object="${employee}"  method="POST">
-			
-			
-				<input type="text" placeholder="First Name" th:field="${employee.firstName}">
-				<input type="text" placeholder="Last Name" th:field="${employee.lastName}">
-				<input type="text" placeholder="Email" th:field="${employee.email}">
-			
-	
-		
-			<button type="submit">Create Employee</button>
-			
+		<hr>
+
+		<form th:action="@{/employees/save}" th:object="${employee}" method="POST">
+
+			<div class="input-group mb-3">
+				<span class="input-group-text">First name</span>
+				<input type="text" aria-label="First name" class="form-control" placeholder="Enter First name"
+					th:field="${employee.firstName}">
+				<span style="color:red"  th:if="${#fields.hasErrors('firstName')}" th:errors="${employee.firstName}">
+				</span>
+			</div>
+			<div class="input-group mb-3">
+				<span class="input-group-text">Last Name</span>
+				<input type="text" aria-label="First name" class="form-control" placeholder="Enter Last name"
+					th:field="${employee.lastName}" value="Last Name">
+					<span style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="${employee.lastName}">
+				</span>
+			</div>
+
+			<div class="input-group mb-3">
+				<span class="input-group-text">Email</span>
+				<input type="text" aria-label="First name" class="form-control" placeholder="Enter employee email "
+					th:field="${employee.email}" value="Email">
+					<span style="color:red"  th:if="${#fields.hasErrors('email')}" th:errors="${employee.email}">
+				</span>
+			</div>
+
+			<div class="form-group mb-3">
+				<button type="submit" class="btn btn-primary mb-2">Confirm Insert</button>
+			</div>
 		</form>
-		
-		
+
 	</div>
 
 </body>

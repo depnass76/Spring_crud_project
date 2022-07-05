@@ -8,21 +8,40 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.redasp.pma.validators.UniqueValue;
 
 @Entity
 public class Project {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.AUTO,generator="project_seq")
 	private long projectId;
 	
-	private String name;	
-	private String stage; //INPROGRESS, COMPLETED, NOTSTARTED	
+	@NotBlank(message="must give a project name!")
+	@Size(min=1,max=50)
+	@UniqueValue
+	private String name;
+	
+	
+	private String stage; //INPROGRESS, COMPLETED, NOTSTARTED
+	
+	@NotBlank(message="must give a project description!")
+	@Size(min=1,max=50)
 	private String description;
 	
-	//@OneToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST},fetch=FetchType.LAZY)
-	@OneToMany(mappedBy="project")
+	
+
+	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST},fetch=FetchType.LAZY)
+	@JoinTable(name="project_employee",joinColumns=@JoinColumn(name="project_id"),inverseJoinColumns=@JoinColumn(name="employee_id"))
+	@JsonIgnore
 	private List<Employee> employees;
 	
 	
@@ -43,6 +62,7 @@ public class Project {
 		return projectId;
 	}
 
+	
 	public void setProjectId(long projectId) {
 		this.projectId = projectId;
 	}
@@ -79,7 +99,16 @@ public class Project {
 		this.employees = employees;
 	}
 	
+   /*public void addEmployee(Employee emp){
+		if(employees == null)
+		{
+			employees = new ArrayList<>();
+		}
+		employees.add(emp);		
+	}*/
 	
+	
+
 	
 	
 	

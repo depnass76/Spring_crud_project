@@ -1,5 +1,7 @@
 package com.redasp.pma.entities;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,22 +9,42 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.redasp.pma.validators.UniqueValue;
+
+
 
 @Entity
 public class Employee {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.AUTO,generator="employee_seq")
 	private long employeeId;
 	
+	@NotBlank(message="must give a first name!")
+	@Size(min=2,max=50)
 	private String firstName;
+	
+	@NotBlank(message="must give a last name!")
+	@Size(min=1,max=50)
 	private String lastName;
+	
+	@NotBlank
+	@Email(message = "must be a valid email address!")
+	@UniqueValue
 	private String email;
 	
-	@ManyToOne(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST},fetch=FetchType.LAZY)
-	@JoinColumn(name="project_id")
-	private Project project;
+	@ManyToMany(cascade= {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST},fetch=FetchType.LAZY)
+	@JoinTable(name="project_employee",joinColumns=@JoinColumn(name="employee_id"),inverseJoinColumns=@JoinColumn(name="project_id"))
+	@JsonIgnore
+	private List<Project> projects;
 	
     public Employee() {
 		
@@ -35,13 +57,16 @@ public class Employee {
 		this.email = email;
 	}
 	
-	public Project getProject() {
-		return project;
-	}
-	public void setProject(Project project) {
-		this.project = project;
-	}
 	
+	
+	public List<Project> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
+	}
+
 	public long getEmployeeId() {
 		return employeeId;
 	}
@@ -68,7 +93,6 @@ public class Employee {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
 	
 	
 	

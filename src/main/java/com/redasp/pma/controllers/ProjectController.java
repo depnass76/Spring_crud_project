@@ -2,74 +2,89 @@ package com.redasp.pma.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 //import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.redasp.pma.dao.IEmployeeRepository;
-import com.redasp.pma.dao.IProjectRepository;
 import com.redasp.pma.entities.Employee;
 import com.redasp.pma.entities.Project;
+import com.redasp.pma.services.EmployeeService;
+import com.redasp.pma.services.ProjectService;
 
 @Controller
 @RequestMapping("/projects")
 public class ProjectController {
-	
+
 	@Autowired
-	IProjectRepository proRepo;
-	
-	
+	ProjectService proService;
+
 	@Autowired
-	IEmployeeRepository empRepo;
-	
-	
+	EmployeeService empService;
+
 	@GetMapping
 	public String displayProjects(Model model) {
-        List<Project> projects =proRepo.findAll();
+		List<Project> projects = proService.getAll();
 		model.addAttribute("projects", projects);
 		return "projects/listsProject";
-		
+
 	}
-    
-	
+
 	@GetMapping("/new")
 	public String displayProjectForm(Model model) {
-		
-		Project aProject = new Project();		
-		List<Employee> employees =empRepo.findAll();
-		model.addAttribute("project", aProject);	
-		model.addAttribute("allEmployees", employees);	
+
+		Project aProject = new Project();
+		List<Employee> employees = empService.getAll();
+		model.addAttribute("project", aProject);
+		model.addAttribute("allEmployees", employees);
 		return "projects/newProject";
 	}
 
-	
-
-	
 	@PostMapping("/save")
-	public String createProject(Project project,@RequestParam List<Long> employees,BindingResult bindingResult, Model model , RedirectAttributes redirectAttrs) {
-	
-		//should handle saving to database...
-		proRepo.save(project);	
+	public String createProject( Model model, @Valid Project project, Errors errors) {
 		
-		Iterable<Employee> chosenEmployees=empRepo.findAllById(employees);
-		
-		for(Employee emp : chosenEmployees) {
-			emp.setProject(project);
-			empRepo.save(emp);
+		if(errors.hasErrors())
+		{
+			return "projects/newProject"; 
 		}
-		//use redirect to prevent duplicate submission
-		return "redirect:/projects/new";
+		
+
+		// should handle saving to database...
+		proService.save(project);
+
+		// use redirect to prevent duplicate submission
+		return "redirect:/projects";
 		//
 	}
 	
-		
 	
+	@GetMapping("/update")
+	public String updateProject(@RequestParam("id") long theId, Model model) {
+		Project theProj = proService.findByProjectId(theId);
+
+		model.addAttribute("project", theProj);
+
+		return "projects/updateProject";
+	}
+
+	@GetMapping("/delete")
+	public String deleteProject(@RequestParam("id") long theId, Model model) {
+
+		Project theProj = proService.findByProjectId(theId);
+
+		proService.delete(theProj);
+		
+		// use redirect to prevent duplicate submission
+		return "redirect:/projects";
+
+	}
+
 }
