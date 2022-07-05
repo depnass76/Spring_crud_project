@@ -72,10 +72,6 @@ public class HomeController {
 		model.addAttribute("employeesListProjectCount", employeesProjectCount);
 		
 		
-		
-		
-		
-		
 		return "main/home";
 	}
 	
